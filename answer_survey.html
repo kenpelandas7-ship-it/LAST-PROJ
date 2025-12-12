@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Answer Survey</title>
+    <link rel="stylesheet" href="respondent.css">
+</head>
+<body>
+
+<h1>Answer Survey</h1>
+
+<div id="surveyContainer">Loading survey...</div>
+<button id="submitBtn" onclick="submitAnswer()" style="display:none">Submit Answers</button>
+
+<script>
+let surveyData = null;
+const respondentId = localStorage.getItem("respondent_id");
+
+if (!respondentId) {
+    alert("Please login first!");
+    window.location.href = "respondent_login.html";
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const params = new URLSearchParams(window.location.search);
+    const surveyId = params.get("id");
+
+    if (!surveyId) {
+        alert("No survey selected!");
+        window.location.href = "respondent_surveys.html";
+        return;
+    }
+
+    fetch(`get_survey_result.php?id=${surveyId}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data || !data.questions || data.questions.length === 0) {
+                document.getElementById("surveyContainer").innerHTML = "<p>No questions found for this survey.</p>";
+                return;
+            }
+            surveyData = data;
+            displaySurvey(data);
+        })
+        .catch(err => {
+            console.error("Error fetching survey:", err);
+            document.getElementById("surveyContainer").innerHTML = "<p>Failed to load survey.</p>";
+        });
+});
+
+function displaySurvey(data) {
+    const container = document.getElementById("surveyContainer");
+    container.innerHTML = `<h2>${data.title}</h2>`;
+
+    data.questions.forEach((q, i) => {
+        const box = document.createElement("div");
+        box.className = "question-box";
+
+        let html = `<p><b>Q${i+1}:</b> ${q.question}</p>`;
+
+        if (q.type === "short") {
+            html += `<input type="text" id="q_${i}" placeholder="Your answer...">`;
+        } else if (q.type === "multiple") {
+            if (!q.options || q.options.length === 0) html += "<p>No options available.</p>";
+            else {
+                q.options.forEach(opt => {
+                    html += `<label><input type="radio" name="q_${i}" value="${opt}"> ${opt}</label><br>`;
+                });
+            }
+        }
+
+        box.innerHTML = html;
+        container.appendChild(box);
+    });
+
+    document.getElementById("submitBtn").style.display = "block";
+}
+
+function submitAnswer() {
+    const answers = surveyData.questions.map((q, i) => {
+        if (q.type === "short") return document.getElementById(`q_${i}`).value.trim();
+        else if (q.type === "multiple") {
+            const selected = document.querySelector(`input[name="q_${i}"]:checked`);
+            return selected ? selected.value : "";
+        }
+        return "";
+    });
+
+    // Send JSON payload
+    fetch("save_response.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            survey_id: surveyData.id,
+            respondent_id: respondentId,
+            answers: answers
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert("Response submitted successfully!");
+            window.location.href = "respondent_surveys.html";
+        } else {
+            alert("Failed to submit response: " + (data.message || "Unknown error"));
+        }
+    })
+    .catch(err => {
+        console.error("Error submitting response:", err);
+        alert("Error submitting response.");
+    });
+}
+</script>
+
+</body>
+</html>

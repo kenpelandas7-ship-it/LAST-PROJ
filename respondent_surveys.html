@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Available Surveys</title>
+    <link rel="stylesheet" href="respondent.css">
+</head>
+<body>
+
+<div id="main">
+    <h1>Available Surveys</h1>
+    <div id="surveyList">Loading...</div>
+    <button id="logoutBtn" style="margin-top:20px;">Logout</button>
+</div>
+
+<script>
+const respondentId = localStorage.getItem("respondent_id");
+if (!respondentId) {
+    alert("Please login first!");
+    window.location.href = "respondent_login.html";
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    fetch("get_surveys.php")
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById("surveyList");
+            container.innerHTML = "";
+
+            if (!data || data.length === 0) {
+                container.innerHTML = "<p>No surveys available at the moment.</p>";
+                return;
+            }
+
+            data.forEach(s => {
+                const div = document.createElement("div");
+                div.className = "survey-item";
+
+                div.innerHTML = `
+                    <h2>${s.title}</h2>
+                    <button onclick="answerSurvey(${s.id})">Answer Survey</button>
+                `;
+
+                container.appendChild(div);
+            });
+        })
+        .catch(err => {
+            console.error("Error loading surveys:", err);
+            document.getElementById("surveyList").innerHTML = "<p>Failed to load surveys.</p>";
+        });
+});
+
+function answerSurvey(id) {
+    // Redirect to the answer survey page with survey ID
+    window.location.href = "answer_survey.html?id=" + id;
+}
+
+document.getElementById("logoutBtn").addEventListener("click", function() {
+    localStorage.removeItem("respondent_id");
+    window.location.href = "respondent_login.html";
+});
+</script>
+
+</body>
+</html>

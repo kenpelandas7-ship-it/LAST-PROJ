@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Survey Results</title>
+<link rel="stylesheet" href="survey_result.css">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">Survey Management System</div>
+    <ul class="nav-links">
+        <li><a href="home_page.html">Home</a></li>
+        <li><a href="dashboard_admin.html">Dashboard</a></li>
+        <li><a href="manage_survey.html">Manage Surveys</a></li>
+        <li><a href="login.html" class="logout-btn">Logout</a></li>
+    </ul>
+</nav>
+
+<h1>Survey Results</h1>
+
+<div id="resultsContainer">
+    <p>Loading results...</p>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", loadResults);
+
+function loadResults() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    if (!id) {
+        document.getElementById("resultsContainer").innerHTML = "<p>No survey selected.</p>";
+        return;
+    }
+
+     fetch("get_survey_result.php?id=" + id)
+        .then(res => res.json())
+        .then(data => displayResults(data))
+        .catch(() => {
+            document.getElementById("resultsContainer").innerHTML = "<p>Error loading results.</p>";
+        });
+}
+
+function displayResults(data) {
+    const container = document.getElementById("resultsContainer");
+    container.innerHTML = "";
+
+    const title = document.createElement("h2");
+    title.textContent = data.title;
+    container.appendChild(title);
+
+    if (!data.responses || data.responses.length === 0) {
+        container.innerHTML += "<p>No responses yet.</p>";
+        return;
+    }
+    data.questions.forEach((q, index) => {
+        const qBox = document.createElement("div");
+        qBox.className = "question-result";
+
+        qBox.innerHTML = `<h3>Q${index + 1}: ${q.question}</h3>`;
+
+        if (q.type === "short") {
+            qBox.innerHTML += "<b>Short Answers:</b>";
+            qBox.innerHTML += "<ul>";
+
+            data.responses.forEach(r => {
+                const ans = r.answers[index] ?? "(empty)";
+                qBox.innerHTML += `<li>${ans}</li>`;
+            });
+
+            qBox.innerHTML += "</ul>";
+        } 
+        else if (q.type === "multiple") {
+            const counts = {};
+
+            q.options.forEach(opt => counts[opt] = 0);
+
+            data.responses.forEach(r => {
+                const ans = r.answers[index];
+                if (counts[ans] !== undefined) {
+                    counts[ans]++;
+                }
+            });
+
+            qBox.innerHTML += "<b>Multiple Choice Results:</b>";
+            qBox.innerHTML += "<ul>";
+            for (const opt in counts) {
+                qBox.innerHTML += `<li>${opt}: <b>${counts[opt]}</b></li>`;
+            }
+            qBox.innerHTML += "</ul>";
+        }
+
+        container.appendChild(qBox);
+    });
+    
+}
+</script>
+
+</body>
+</html>

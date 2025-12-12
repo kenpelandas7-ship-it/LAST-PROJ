@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Respondent Login</title>
+    <link rel="stylesheet" href="respondent.css">
+</head>
+<body>
+
+<div id="main">
+    <h2>Respondent Login</h2>
+
+    <form id="respondentLoginForm">
+        <label>Email:</label>
+        <input type="email" id="email" required>
+        <label>Password:</label>
+        <input type="password" id="password" required>
+        <button type="submit" id="loginBtn">Login</button>
+    </form>
+
+    <p style="margin-top: 15px; text-align:center;">
+        Don't have an account?
+        <a href="respondent_signup.html" style="color:#0c4a6e; font-weight:bold;">Sign Up</a>
+    </p>
+
+    <!-- Button to go to Admin login page -->
+    <p style="margin-top: 15px; text-align:center;">
+        <a href="login.html" style="
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #0c4a6e;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s;
+        ">Admin Login</a>
+    </p>
+</div>
+
+<script>
+document.getElementById("respondentLoginForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    let email = document.getElementById("email").value.trim();
+    let password = document.getElementById("password").value.trim();
+
+    fetch("respondent_login.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ email, password })
+    })
+    .then(res => res.json())
+    .then(d => {
+        if (d.success) {
+            localStorage.setItem("respondent_id", d.user_id);
+            window.location.href = "respondent_surveys.html";
+        } else {
+            alert("Invalid login");
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Something went wrong.");
+    });
+});
+</script>
+
+</body>
+</html>

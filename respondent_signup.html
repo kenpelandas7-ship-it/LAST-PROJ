@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Respondent Signup</title>
+    <link rel="stylesheet" href="respondent.css">
+</head>
+<body>
+
+<div id="main">
+    <h2>Respondent Signup</h2>
+
+    <form id="signupForm">
+        <label>Full Name:</label>
+        <input type="text" id="name" required>
+
+        <label>Email:</label>
+        <input type="email" id="email" required>
+
+        <label>Password:</label>
+        <input type="password" id="password" required>
+
+        <button type="submit">Create Account</button>
+    </form>
+
+    <p style="margin-top: 15px; text-align:center;">
+        Already have an account?  
+        <a href="respondent_login.html">Login</a>
+    </p>
+</div>
+
+<script>
+document.getElementById("signupForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    let name = document.getElementById("name").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let password = document.getElementById("password").value.trim();
+
+    fetch("respondent_signup.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ name, email, password })
+    })
+    .then(res => res.json())
+    .then(d => {
+        if (d.success) {
+            alert("Signup successful! You can now login.");
+            window.location.href = "respondent_login.html";
+        } else {
+            alert(d.message);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Something went wrong.");
+    });
+});
+</script>
+
+</body>
+</html>

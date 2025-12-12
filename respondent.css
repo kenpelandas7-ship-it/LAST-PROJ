@@ -1,0 +1,145 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f4f5fa;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 40px;
+}
+
+.navbar {
+    width: 100%;
+    background: #7a8885;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar .logo {
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.nav-links, .navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+}
+
+.nav-links a,
+.navbar ul li a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.nav-links a:hover,
+.navbar ul li a:hover {
+    background: #556264;
+}
+
+
+h1, h2 {
+    margin-top: 20px;
+    text-align: center;
+    color: #0c4a6e;
+}
+
+
+button {
+    padding: 12px 20px;
+    background-color: #7a8885;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 15px;
+}
+
+button:hover {
+    background-color: #075a8c;
+}
+
+
+#main {
+    background: white;
+    width: 350px;
+    margin-top: 60px;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+#main h2 {
+    margin-bottom: 20px;
+    color: #0c4a6e;
+    text-align: center;
+}
+
+#main input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+
+.survey-item {
+    background: white;
+    width: 80%;
+    max-width: 600px;
+    padding: 20px;
+    margin: 15px auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.survey-item h2 {
+    color: #0c4a6e;
+    margin-bottom: 10px;
+}
+
+.question-box {
+    background: white;
+    padding: 20px;
+    width: 80%;
+    max-width: 700px;
+    margin: 20px auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.question-box p {
+    color: #0c4a6e;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.question-box input[type="text"]{
+    width: 100%;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #bbb;
+}
+
+.question-box label {
+    margin: 5px 0;
+    display: block;
+    font-size: 16px;
+}
